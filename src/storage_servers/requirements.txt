@@ -1,2 +1,5 @@
 fastapi
 uvicorn
+httpx
+python-multipart
+redis
