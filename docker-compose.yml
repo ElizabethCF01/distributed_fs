@@ -1,0 +1,64 @@
+version: "3.8"
+services:
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+  naming_server:
+    build: ./src/naming_server
+    depends_on:
+      - redis
+    environment:
+      - REDIS_HOST=redis
+    ports:
+      - "8000:8000"
+  cli:
+    build: ./src/cli
+    depends_on:
+      - naming_server
+      - storage1
+      - storage2
+      - storage3
+    environment:
+      - NAMING_SERVER_URL=http://naming_server:8000
+  storage1:
+    build: ./src/storage_servers
+    depends_on:
+      - naming_server
+    environment:
+      - NAMING_SERVER_URL=http://naming_server:8000
+      - DATA_ROOT=/data
+      - HOST=storage1
+    volumes:
+      - storage1_data:/data
+    ports:
+      - "8001:5001"
+  storage2:
+    build: ./src/storage_servers
+    depends_on:
+      - naming_server
+    environment:
+      - NAMING_SERVER_URL=http://naming_server:8000
+      - DATA_ROOT=/data
+      - HOST=storage2
+    volumes:
+      - storage2_data:/data
+    ports:
+      - "8002:5001"
+  storage3:
+    build: ./src/storage_servers
+    depends_on:
+      - naming_server
+    environment:
+      - NAMING_SERVER_URL=http://naming_server:8000
+      - DATA_ROOT=/data
+      - HOST=storage3
+    volumes:
+      - storage3_data:/data
+    ports:
+      - "8003:5001"
+
+volumes:
+  storage1_data:
+  storage2_data:
+  storage3_data:

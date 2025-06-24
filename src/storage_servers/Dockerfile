@@ -1,9 +1,9 @@
 FROM python:3.11-slim
-WORKDIR /app
-COPY main.py requirements.txt ./
-COPY storage ./storage
-RUN pip install --no-cache-dir -r requirements.txt
-RUN mkdir -p storage
-EXPOSE 5001
 
-CMD ["python", "main.py", "--port", "5001"]
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY main.py /app/main.py
+EXPOSE 8001
+
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8001"]
