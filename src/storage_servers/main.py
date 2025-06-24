@@ -1,11 +1,26 @@
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.responses import FileResponse
 import os
-import argparse
+import httpx
 
 app = FastAPI()
+
 CHUNK_DIR = "storage"
-os.makedirs(CHUNK_DIR, exist_ok=True)
+naming_url = os.getenv('NAMING_SERVER_URL')
+host = os.getenv('HOST', 'storage_server')
+port = int(os.getenv('PORT', '8001'))
+
+@app.on_event("startup")
+async def startup():
+    os.makedirs(CHUNK_DIR, exist_ok=True)
+    async with httpx.AsyncClient() as client:
+        try:
+            resp = await client.post(f"{naming_url}/register_storage", json={"host": host, "port": port})
+            resp.raise_for_status()
+            data = resp.json()
+            print(f"Registered storage server: {data['server_id']}")
+        except Exception as e:
+            print(f"Failed to register: {e}")
 
 @app.post("/chunks/{chunk_id}")
 async def upload_chunk(chunk_id: str, chunk: UploadFile = File(...)):
@@ -33,7 +48,4 @@ async def delete_chunk(chunk_id: str):
 
 if __name__ == "__main__":
     import uvicorn
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--port", type=int, default=5001)
-    args = parser.parse_args()
-    uvicorn.run("main:app", host="0.0.0.0", port=args.port)
+    uvicorn.run("main:app", host="0.0.0.0", port=port)
