@@ -1,4 +1,4 @@
-# Distributed Chunk Storage — Project README
+# Distributed File System — Project README
 
 > **TL;DR** ‣ `docker compose up` spins up a **Naming‑Server**, **Redis**, and three **Storage‑Servers**. Use the bundled **CLI** container to create, read, size‑check, and delete files via a replicated, chunk‑based file‑system.
 
