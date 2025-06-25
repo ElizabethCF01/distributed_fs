@@ -35,7 +35,7 @@
 | ------------------ | ------------------ | ----- | --------------------------------------- |
 | **Naming‑Server**  | `naming_server`    | 8000  | FastAPI service; keeps *metadata only*. |
 | **Redis**          | `redis`            | 6379  | Single‑node in‑memory KV store.         |
-| **Storage‑Server** | `storage_server‑X` | 5001  | Stores binary chunks on local disk.     |
+| **Storage‑Server** | `storage:id`       | 5001  | Stores binary chunks on local disk.     |
 | **CLI**            | `cli` (ephemeral)  | —     | Helper wrapper for file operations.     |
 
 **Replication Factor = 3** — every chunk is written to three distinct storage nodes.
